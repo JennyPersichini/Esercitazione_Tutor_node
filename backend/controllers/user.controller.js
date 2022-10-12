@@ -73,6 +73,8 @@ module.exports.delete = async (req, res) => {
     if (!user) {
       throw new Error("Quest'utente non esiste");
     } else {
+      let isCorrect = await bcrypt.compare(password, user.password);
+      if(isCorrect) {
       let deleteData = user.deleteOne({
         email: user.email,
         password: user.password,
@@ -81,8 +83,11 @@ module.exports.delete = async (req, res) => {
         status: 200,
         message: "User eliminato correttamente",
       });
+    }else{
+      throw new Error("Password Errata");
+    }
     }
   } catch (error) {
-    response.send({ status: 400, message: error.message, body: {} });
+    res.send({ status: 400, message: error.message, body: {} });
   }
 };
